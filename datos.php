@@ -102,20 +102,21 @@ class registros
     //     $this->conexion->conexion->query($consulta_insertar);
     // }
 
-    // public function selectupdate($id)
-    // {
-    //     $consultaSelect = "SELECT * FROM registros WHERE id=$id";
-    //     $ejecutar_consulta = $this->conexion->conexion->query($consultaSelect);
-    //     return $ejecutar_consulta->fetch_all(MYSQLI_ASSOC);
-    // }
+    public function selectupdate($id)
+    {
+        $consultaSelect = "SELECT * FROM tasks WHERE task_id=$id";
+        $ejecutar_consulta = $this->conexion->conexion->query($consultaSelect);
+        return $ejecutar_consulta->fetch_assoc();
+    }
     // public function update($id, $datos)
     // {
     //     $set = [];
     //     foreach ($datos as $campo => $valor) {
+    //         $valor = $this->conexion->conexion->real_escape_string($valor); // Escape the values to prevent SQL injection
     //         $set[] = "$campo = '$valor'";
     //     }
     //     $set = implode(',', $set);
-    //     $consulta_actualizar = "UPDATE registros SET $set WHERE id = $id";
+    //     $consulta_actualizar = "UPDATE tasks SET $set WHERE task_id = $id";
     //     $resultado = $this->conexion->conexion->query($consulta_actualizar);
     //     if ($resultado) {
     //         return true;
@@ -123,6 +124,17 @@ class registros
     //         return $this->conexion->conexion->error;
     //     }
     // }
+    public function updateTask($id, $datos)
+    {
+        $set = [];
+        foreach ($datos as $campo => $valor) {
+            $set[] = "$campo = '$valor'";
+        }
+        $set = implode(',', $set);
+        $consulta_actualizar = "UPDATE tasks SET $set WHERE task_id = $id";
+        $resultado = $this->conexion->conexion->query($consulta_actualizar);
+        return $resultado ? true : false;
+    }
     // public function delete($id)
     // {
     //     $consultaDelete = "DELETE FROM registros WHERE id=$id";
@@ -169,11 +181,21 @@ if ($banderas == 1) {
     header("Location: index.php?id=$user_id");
 } else if ($banderas == 2) {
     // actualizar
-    // $id = $ids;
-    // $datosUpdate = array('nombre' => $nombre, 'telefono' => $telefono, 'genero' => $genero);
-    // $conexion->conectar();
-    // $gestion->update($id, $datosUpdate);
-    // header("Location: index.php");
+    $id = $ids;
+    echo $id;
+    $user_id = isset($_GET['user']) ? $_GET['user'] : "";
+    $description = isset($_POST['task_name']) ? $_POST['task_name'] : "";
+    $due_date = isset($_POST['due_date']) ? $_POST['due_date'] : "";
+    $due_date = date("Y-m-d", strtotime($due_date));
+    $course_id = isset($_POST['course_id']) ? $_POST['course_id'] : "";
+    $datosUpdate = array('description' => $description, 'due_date' => $due_date, 'task_id' => $id, 'course_id' => $course_id);
+    $conexion->conectar();
+    $res = $gestion->updateTask($id, $datosUpdate);
+    if ($res == true) {
+        header("Location: /sites/path1/index.php?id=$user_id");
+    } else {
+        header("Location: /sites/path1/index.php?error=1");
+    }
 } else if ($banderaE == 3) {
     // eliminar
     // $conexion->conectar();

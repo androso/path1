@@ -39,14 +39,20 @@
                     <tr>
                         <th>Tarea</th>
                         <th>Fecha de finalizacion</th>
+                        <th>Acciones</th>
                     </tr>
                     <?php foreach ($course['tasks'] as $task) : ?>
                         <tr>
                             <td><?= $task['description']; ?></td>
                             <td><?= $task['due_date']; ?></td>
+                            <td>
+                                <a href="modificar.php?id=<?= $task['task_id'] ?>&user=<?= $user_id ?>">Modificar</a>
+                                <a href="datos.php?iddelete=<?= $filas['task_id'] ?>&banderaE=3">Eliminar</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
+                <br><br>
             <?php endforeach; ?>
         <?php } ?>
 

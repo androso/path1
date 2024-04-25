@@ -2,41 +2,36 @@
 
 include_once("datos.php");
 
-$id = isset($_GET['id'])  ? $_GET['id'] : "";
-
+$task_id = isset($_GET['id'])  ? $_GET['id'] : "";
+$user_id = isset($_GET['user']) ? $_GET['user'] : "";
 $conexion->conectar();
-
-$registros = $gestion->selectupdate($id);
-foreach ($registros as $filas) : ?>
-
-
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-    </head>
-
-    <body>
-        <form action="datos.php" method="post">
-            <label for="">Nombre</label>
-            <input type="text" name="banderas" value="2" hidden>
-            <input type="text" name="id" value="<?= $filas["id"] ?>" hidden>
-            <input type="text" name="nombre" id="" value="<?= $filas["nombre"] ?>">
-            <br>
-            <label for="">Telefono</label>
-            <input type="text" name="telefono" id="" value="<?= $filas["telefono"] ?>">
-            <br>
-            <label for="">Genero</label>
-            <input type="text" name="genero" id="" value="<?= $filas["genero"] ?>">
-            <br>
-            <input type="submit" value="enviar">
-        </form>
-    </body>
-
-    </html>
-<?php
-endforeach;
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Tarea</title>
+</head>
+
+<body>
+    <?php
+    $task = $gestion->selectUpdate($task_id);
+    ?>
+    <h1>Editar Tarea</h1>
+    <p>Actualiza los datos de esta tarea</p>
+    <form action="datos.php?user=<?= $user_id ?>" method="POST">
+        <label for="task-name">Tarea:</label>
+        <input type="text" value="<?= $task['description'] ?>" id="task-name" name="task_name" required><br><br>
+        <input type="text" value="2" name="banderas" hidden>
+        <input type="text" value="<?= $task['course_id'] ?>" name="course_id" hidden>
+        <input type="text" value="<?= $task['task_id'] ?>" name="id" hidden>
+        <label for="due-date">Fecha limite:</label>
+        <input type="date" id="due-date" name="due_date" value="<?= $task['due_date'] ?>" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
