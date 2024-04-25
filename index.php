@@ -13,14 +13,43 @@
     $conexion->conectar();
     $user_id = isset($_GET['id']) ? $_GET['id'] : null;
     $user = null;
-    if (isset($user_id)) {
+    if (!empty($user_id)) {
         $user = $gestion->selectUser($user_id);
+        $courses = $gestion->selectCourses($user_id);
     }
+    $error = isset($_GET['error']) ? $_GET['error'] : null;
     ?>
     <?php
     if ($user) { ?>
         <!-- INTERFAZ PARA USUARIO -->
         <h1>Bienvenido, <?= $user['name'] ?></h1>
+        <?php
+        if ($error) {
+            echo "<p style='color:red'>Ha ocurrido un error en la anterior transaccion</p>";
+        }
+        if (count($courses) == 0) {
+            echo "<p>No tienes cursos registrados</p>";
+        } else { ?>
+            <p>Tus cursos registrados son:</p>
+            <?php foreach ($courses as $course) : ?>
+                <table border="1" style="min-width: 300px;">
+                    <caption>Course: <?= $course["name"]; ?>
+                        <a role="button" href="nueva-tarea.php?course=<?= $course['course_id'] ?>&user=<?= $user_id ?>">Nueva Tarea</a>
+                    </caption>
+                    <tr>
+                        <th>Tarea</th>
+                        <th>Fecha de finalizacion</th>
+                    </tr>
+                    <?php foreach ($course['tasks'] as $task) : ?>
+                        <tr>
+                            <td><?= $task['description']; ?></td>
+                            <td><?= $task['due_date']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endforeach; ?>
+        <?php } ?>
+
     <?php
     } else { ?>
         <!-- INTERFAZ PARA USUARIO NO LOGGEADO -->
@@ -31,16 +60,7 @@
         </div>
     <?php
     };
-    // $courses = $gestion->selectCourses($user_id);
     ?>
-
-
-    <table>
-        <!-- <td>
-                <a href="modificar.php?id=<?= $filas['user_id'] ?>">Modificar</a>
-                <a href="datos.php?iddelete=<?= $filas['user_id'] ?>&banderaE=3">Eliminar</a>
-            </td> -->
-    </table>
 </body>
 
 </html>

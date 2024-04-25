@@ -71,6 +71,28 @@ class registros
             return null;
         }
     }
+    public function selectCourses($user_id)
+    {
+        if (empty($user_id)) {
+            return [];
+        }
+        $consultaSelect = "SELECT * FROM courses WHERE user_id = $user_id";
+        $ejecutar_consulta = $this->conexion->conexion->query($consultaSelect);
+        $courses = $ejecutar_consulta->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($courses as &$course) {
+            $course_id = $course['course_id'];
+            $consultaSelectTasks = "SELECT * FROM tasks WHERE course_id = $course_id";
+            $ejecutar_consulta_tasks = $this->conexion->conexion->query($consultaSelectTasks);
+            $tasks = $ejecutar_consulta_tasks->fetch_all(MYSQLI_ASSOC);
+            foreach ($tasks as &$task) {
+                $task['due_date'] = date("Y-m-d", strtotime($task['due_date']));
+            }
+            $course['tasks'] = $tasks;
+        }
+
+        return $courses;
+    }
 
     // public function insert($datos)
     // {
@@ -107,6 +129,20 @@ class registros
     //     $ejecutar_delete = $this->conexion->conexion->query($consultaDelete);
     //     return $ejecutar_delete;
     // }
+    public function createTask($course_id, $task_name, $due_date)
+    {
+        $due_date = date("Y-m-d", strtotime($due_date)); // Convert the date to a compatible format for SQL
+        $datos = array(
+            'course_id' => $course_id,
+            'description' => $task_name,
+            'due_date' => $due_date
+        );
+        $campos = implode(',', array_keys($datos));
+        $valores = "'" . implode("','", array_values($datos)) . "'";
+        $consulta_insertar = "INSERT INTO tasks ($campos) VALUES ($valores)";
+        $resultado = $this->conexion->conexion->query($consulta_insertar);
+        return $resultado ? true : false;
+    }
 }
 
 $gestion = new registros($conexion);
@@ -125,12 +161,12 @@ if ($banderas == 1) {
     if (isset($user_id)) {
         foreach ($courses as $course) {
             $course['user_id'] = $user_id;
-            $gestion->createCourse($course);
+            if (!empty($course['name'])) {
+                $gestion->createCourse($course);
+            }
         }
     }
     header("Location: index.php?id=$user_id");
-    // $gestion->insert($datosInsert);
-    // header('Location:index.php');
 } else if ($banderas == 2) {
     // actualizar
     // $id = $ids;
@@ -153,5 +189,18 @@ if ($banderas == 1) {
         header("Location: index.php?id=" . $user['user_id']);
     } else {
         header("Location: login.php?error=1");
+    }
+} else if ($banderas == 5) {
+    // Nueva tarea
+    $conexion->conectar();
+    $course_id = isset($_GET['course']) ? $_GET['course'] : null;
+    $task_name = isset($_POST['task_name']) ? $_POST['task_name'] : null;
+    $due_date = isset($_POST['due_date']) ? $_POST['due_date'] : null;
+    $task_succes = $gestion->createTask($course_id, $task_name, $due_date);
+    $user_id = isset($_GET['user']) ? $_GET['user'] : null;
+    if ($task_succes) {
+        header("Location: /sites/path1/index.php?id=$user_id");
+    } else {
+        header("Location: index.php?error=1");
     }
 }
