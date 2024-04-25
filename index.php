@@ -8,36 +8,39 @@
 </head>
 
 <body>
-    <a href="registrar.php">Registrar</a>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Telefono</th>
-            <th>Genero</th>
-        </tr>
+    <?php
+    include_once("datos.php");
+    $conexion->conectar();
+    $user_id = isset($_GET['id']) ? $_GET['id'] : null;
+    $user = null;
+    if (isset($user_id)) {
+        $user = $gestion->selectUser($user_id);
+    }
+    ?>
+    <?php
+    if ($user) { ?>
+        <!-- INTERFAZ PARA USUARIO -->
+        <h1>Bienvenido, <?= $user['name'] ?></h1>
+    <?php
+    } else { ?>
+        <!-- INTERFAZ PARA USUARIO NO LOGGEADO -->
+        <h1>Bienvenido a tu aplicacion de tareas universitaria</h1>
+        <div>
+            <a href="registrar.php">Registrar</a>
+            <a href="login.php">Iniciar Sesion</a>
+        </div>
+    <?php
+    };
+    // $courses = $gestion->selectCourses($user_id);
+    ?>
 
-        <?php
-        include_once("datos.php");
-        $conexion->conectar();
-        $registros = $gestion->select();
-        foreach ($registros as $filas) :
-        ?>
-            <tr>
-                <td><?= $filas['id'] ?></td>
-                <td><?= $filas['nombre'] ?></td>
-                <td><?= $filas['telefono'] ?></td>
-                <td><?= $filas['genero'] ?></td>
-            
-                <td>
-                    <a href="modificar.php?id=<?= $filas['id'] ?>">Modificar</a>
-                    <a href="datos.php?iddelete=<?= $filas['id'] ?>&banderaE=3">Eliminar</a>
-                </td>
-            </tr>
-        <?php endforeach;
-        ?>
+
+    <table>
+        <!-- <td>
+                <a href="modificar.php?id=<?= $filas['user_id'] ?>">Modificar</a>
+                <a href="datos.php?iddelete=<?= $filas['user_id'] ?>&banderaE=3">Eliminar</a>
+            </td> -->
     </table>
-
 </body>
 
 </html>

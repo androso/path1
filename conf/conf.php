@@ -35,4 +35,4 @@ class ConexionaBD
         }
     }
 }
-$conexion = new ConexionaBD('localhost', 'root', '', 'personas');
+$conexion = new ConexionaBD('localhost', 'root', '', 'kanban');
