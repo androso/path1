@@ -47,7 +47,7 @@
                             <td><?= $task['due_date']; ?></td>
                             <td>
                                 <a href="modificar.php?id=<?= $task['task_id'] ?>&user=<?= $user_id ?>">Modificar</a>
-                                <a href="datos.php?iddelete=<?= $filas['task_id'] ?>&banderaE=3">Eliminar</a>
+                                <a href="datos.php?iddelete=<?= $task['task_id'] ?>&banderaE=3&user=<?= $user_id ?>">Eliminar</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

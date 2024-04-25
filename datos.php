@@ -135,12 +135,12 @@ class registros
         $resultado = $this->conexion->conexion->query($consulta_actualizar);
         return $resultado ? true : false;
     }
-    // public function delete($id)
-    // {
-    //     $consultaDelete = "DELETE FROM registros WHERE id=$id";
-    //     $ejecutar_delete = $this->conexion->conexion->query($consultaDelete);
-    //     return $ejecutar_delete;
-    // }
+    public function delete($id)
+    {
+        $consultaDelete = "DELETE FROM tasks WHERE task_id=$id";
+        $ejecutar_delete = $this->conexion->conexion->query($consultaDelete);
+        return $ejecutar_delete;
+    }
     public function createTask($course_id, $task_name, $due_date)
     {
         $due_date = date("Y-m-d", strtotime($due_date)); // Convert the date to a compatible format for SQL
@@ -198,11 +198,12 @@ if ($banderas == 1) {
     }
 } else if ($banderaE == 3) {
     // eliminar
-    // $conexion->conectar();
-    // $prueba = $gestion->delete($idd);
-    // if ($prueba) {
-    //     header("Location: index.php");
-    // }
+    $conexion->conectar();
+    $user_id = isset($_GET['user']) ? $_GET['user'] : "";
+    $prueba = $gestion->delete($idd);
+    if ($prueba) {
+        header("Location: index.php?id=$user_id");
+    }
 } else if ($banderas == 4) {
     // login
     $conexion->conectar();
